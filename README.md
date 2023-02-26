@@ -1,8 +1,15 @@
 # local-server (Production)
 
-Production server for the entire ZINC stack, powered by Docker Compose.
+Production server for the entire ZINC stack powered by Docker Compose.
 
-Upon running this server, you can visit https://zinc2023.ust.dev/ to access the Console UI.
+## URLs
+
+Upon running this server, you can visit:
+
+- https://zinc2023.ust.dev/ - Console UI
+- (WIP) - Student UI
+
+If you're seeing an error on first load, please append `login` to the URL (e.g. https://zinc2023.ust.dev/login). The `login` endpoint is a temporary endpoint that bypasses the HKUST OAuth login by setting a cookie.
 
 ## Initial Setup
 
