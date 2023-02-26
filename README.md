@@ -50,6 +50,8 @@ Make sure that you can run Docker as a non-root user. Follow [this guide](https:
        └── shared/              # Same as `config.properties` -> `context.inPaths.envHostRoot`
            └── extracted/         # Extracted files from submissions
            └── generated/         # Generated files by the grader daemon
+               └── assignment/
+               └── submission/
            └── helpers/           # Helper files for grading assignments
            └── submitted/         # Student submissions
    └── hasura-server/         # https://github.com/ZINC-FYP-2022-23/hasura-server

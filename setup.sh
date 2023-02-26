@@ -21,7 +21,7 @@ git clone https://gitlab.com/zinc-stack/grader.git
 cd "$SCRIPT_PARENT_DIR" || exit
 echo "[INFO] Setting up '$SCRIPT_PARENT_DIR/grader-daemon' folder"
 mkdir grader-daemon/ && cd grader-daemon || exit
-mkdir -p log out shared/extracted shared/generated shared/helpers shared/submitted
+mkdir -p log out shared/extracted shared/generated/assignment shared/generated/submission shared/helpers shared/submitted
 
 # Set up `local-server` folder
 echo "[INFO] Setting up '$SCRIPT_PARENT_DIR/local-server' folder"
