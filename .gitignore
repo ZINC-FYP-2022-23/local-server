@@ -1,0 +1,9 @@
+.env
+cloudflared-config.yml
+cloudflared-credentials.json
+config.properties
+
+# Misc
+.directory
+.DS_Store
+._*

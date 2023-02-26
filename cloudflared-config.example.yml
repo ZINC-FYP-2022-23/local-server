@@ -1,0 +1,14 @@
+# Example config file for cloudflared, which is used for tunneling (i.e. connect to the local
+# Docker compose network from the Internet)
+
+tunnel: zincfyp2023
+credentials-file: /etc/cloudflared/tunnel-credentials.json
+
+ingress:
+  # IP Address uses your machine's local IP address (not the public IP of your machine)
+  # It can be checked via the `ip a` command
+
+  # API URL for Hasura GraphQL Engine
+  - hostname: apizinc2023.ust.dev
+    service: http://${LOCAL_IP}:8080
+  - service: http://${LOCAL_IP}:3000

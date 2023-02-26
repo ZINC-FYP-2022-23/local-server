@@ -1,0 +1,154 @@
+version: "3.6"
+services:
+  # Allows public users to access our Docker compose server via the URL provided by Kris
+  # Comment out this service if you don't wish to expose the server to the public
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    networks:
+      - zinc-production
+    volumes:
+      - ./cloudflared-config.yml:/etc/cloudflared/config.yml
+      - ./cloudflared-credentials.json:/etc/cloudflared/tunnel-credentials.json
+
+  postgres:
+    image: postgres:12
+    container_name: postgres
+    restart: always
+    networks:
+      - zinc-production
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data_prod:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: zinc
+
+  graphql-engine:
+    ports:
+      - "8080:8080"
+    image: hasura/graphql-engine:latest.cli-migrations-v3
+    container_name: graphql-engine
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - zinc-production
+    environment:
+      # Reference: https://hasura.io/docs/latest/deployment/graphql-engine-flags/reference/
+
+      # Admin password
+      HASURA_GRAPHQL_ADMIN_SECRET: zincdevtest
+
+      # Database to connect
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:admin@postgres:5432/zinc
+
+      # Enable Hasura Console (http://localhost:8080/console)
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+
+      # Enable dev mode
+      HASURA_GRAPHQL_DEV_MODE: "true"
+
+      # Mounted paths to apply auto-migration at first time set-up
+      HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
+
+      # Auth using webhooks (https://hasura.io/docs/latest/auth/authentication/webhook/)
+      # - We're using a mock identify endpoint (`/identity-mock`) in the "webhook" repo, which bypasses OAuth
+      # - Caveat: The endpoint will get empty cookies because of the "webhook" service name in the URL
+      HASURA_GRAPHQL_AUTH_HOOK: http://webhook:4000/identity-mock
+      HASURA_GRAPHQL_AUTH_HOOK_MODE: POST
+    volumes:
+      - ../hasura-server/hasura/metadata:/hasura-metadata
+      - ../hasura-server/hasura/migrations:/hasura-migrations
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    networks:
+      - zinc-production
+    ports:
+      - "6379:6379"
+
+  webhook:
+    container_name: webhook
+    build:
+      context: ../webhook
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+    restart: always
+    networks:
+      - zinc-production
+    ports:
+      - "4000:4000"
+    volumes:
+      - ../grader-daemon/shared:${GRADER_HOST_ROOT}
+    environment:
+      # View "webhook" repo -> ".env.example" for more details
+      WEBHOOK_PORT: 4000
+      SHARED_MOUNT_PATH: ${GRADER_HOST_ROOT}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      HASURA_ADDR: graphql-engine:8080
+      HASURA_GRAPHQL_ADMIN_SECRET: zincdevtest
+
+  grader:
+    container_name: grader
+    build:
+      dockerfile: ./grader.dockerfile
+    depends_on:
+      - redis
+    restart: always
+    networks:
+      - zinc-production
+    volumes:
+      # Allow container to access Docker
+      - /tmp/docker.sock:/tmp/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # Shared folders
+      - ../grader-daemon/shared:${GRADER_HOST_ROOT}
+      - ../grader-daemon/log:/grader/log
+      - ../grader-daemon/out:/grader/out
+
+      # Grader daemon and config
+      - ../grader-daemon/zinc-grader-daemon.jar:/srv/zinc-grader-daemon.jar
+      - ./config.properties:/srv/config.properties
+
+  console:
+    container_name: console
+    build:
+      context: ../console
+      dockerfile: Dockerfile
+      args:
+        NPM_TOKEN: ${FONT_AWESOME_NPM_TOKEN}
+    depends_on:
+      - webhook
+    restart: always
+    networks:
+      - zinc-production
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../grader-daemon/shared:${GRADER_HOST_ROOT}
+    environment:
+      # View "console" repo -> ".env.local.example" for more details
+      NEXT_PUBLIC_UPLOAD_DIR: ${GRADER_HOST_ROOT}
+      PORT: 3000
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      API_URL: apizinc2023.ust.dev
+      HASURA_GRAPHQL_ADMIN_SECRET: zincdevtest
+      WEBHOOK_ADDR: webhook:4000
+
+volumes:
+  db_data_prod:
+
+networks:
+  zinc-production:
+    external: false
+    name: zinc-production
