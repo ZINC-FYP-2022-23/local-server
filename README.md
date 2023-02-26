@@ -40,28 +40,28 @@ Make sure that you can run Docker as a non-root user. Follow [this guide](https:
    The set-up script will clone other necessary repos and create new folders in the folder you created in step 1. After the script has
    finished running, your file directory should look something like:
 
-   ```
+   ```sh
    ~/dev/fyp-prod/
-   └── console/
-   └── grader/
+   └── console/               # https://github.com/ZINC-FYP-2022-23/console
+   └── grader/                # https://gitlab.com/zinc-stack/grader
    └── grader-daemon/         # Stores grader daemon-related files
        └── log/                 # Same as `config.properties` -> `context.logPaths.envHostRoot`
        └── out/                 # Same as `config.properties` -> `context.outPathsRoots.envHostRoot`
        └── shared/              # Same as `config.properties` -> `context.inPaths.envHostRoot`
-           └── extracted/
-           └── generated/
-           └── helpers/
-           └── submitted/
-   └── hasura-server/
-       └── hasura/                  # Metadata of Hasura server
+           └── extracted/         # Extracted files from submissions
+           └── generated/         # Generated files by the grader daemon
+           └── helpers/           # Helper files for grading assignments
+           └── submitted/         # Student submissions
+   └── hasura-server/         # https://github.com/ZINC-FYP-2022-23/hasura-server
+       └── hasura/              # Metadata of Hasura server
        └── ...
    └── local-server/
        └── .env                     # Environmental variables for Docker Compose
        └── cloudflared-config.yml   # Cloudflared configuration file
        └── config.properties        # Grader daemon configuration file
        └── ...
-   └── student-ui/
-   └── webhook/
+   └── student-ui/            # https://github.com/ZINC-FYP-2022-23/student-ui
+   └── webhook/               # https://github.com/ZINC-FYP-2022-23/webhook
    ```
 
    > **Warning**
@@ -75,14 +75,26 @@ The setup script created several configuration files under `local-server/`:
 
 - `.env` - Environmental variables for Docker Compose
   - Please provide the value for `FONT_AWESOME_NPM_TOKEN`
-- `cloudflared-config.yml` - Cloudflared configuration file
-  - This configures `cloudflared`, which exposes our Docker compose server to the Internet via a Cloudflare domain
+- `cloudflared-config.yml` - Cloudflare Tunnel configuration file
+  - This configures the `cloudflared` service, which exposes our Docker compose server to the Internet via a Cloudflare domain
 - `config.properties` - Grader daemon configuration file
   - Double check the paths `context.inPaths.envHostRoot`, `context.outPathsRoots.envHostRoot`, and `context.logPaths.envHostRoot` to make sure they exist on your machine
 
-### Cloudflared
+### Cloudflare Tunnel
 
-In `local-server/` folder, you should create a new file called `cloudflared-credentials.json`, which contains the credentials for the Cloudflared tunnelling service. Please contact Kris for the credentials.
+The production server uses [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/) to let users access our Docker Compose server using the public URLs.
+
+In `local-server/` folder, you should create a new file called `cloudflared-credentials.json`:
+
+```sh
+~/dev/fyp-prod/
+└── local-server/
+  └── cloudflared-credentials.json    # <--- Create this file
+  └── ...
+└── ...
+```
+
+It contains the credentials for the Cloudflared tunnelling service. Please contact Kris for the credentials.
 
 ### Grader Daemon Executable
 
@@ -136,4 +148,4 @@ docker compose build
 docker compose up
 ```
 
-It may be possible that the `graphql-engine` containers fail to start. This is expected behavior since it's possible that `postgres` runs the database migrations after `graphql-engine` is ready. If this happens, simply stop the server and start it again.
+It may be possible that the `graphql-engine` container fail to start. This is expected behavior since it's possible that `postgres` runs the database migrations **after** `graphql-engine` is ready. If this happens, simply stop the server and start it again.
