@@ -42,28 +42,28 @@ Make sure that you can run Docker as a non-root user. Follow [this guide](https:
 
    ```sh
    ~/dev/fyp-prod/
-   └── console/               # https://github.com/ZINC-FYP-2022-23/console
-   └── grader/                # https://gitlab.com/zinc-stack/grader
-   └── grader-daemon/         # Stores grader daemon-related files
-       └── log/                 # Same as `config.properties` -> `context.logPaths.envHostRoot`
-       └── out/                 # Same as `config.properties` -> `context.outPathsRoots.envHostRoot`
-       └── shared/              # Same as `config.properties` -> `context.inPaths.envHostRoot`
-           └── extracted/         # Extracted files from submissions
-           └── generated/         # Generated files by the grader daemon
-               └── assignment/
-               └── submission/
-           └── helpers/           # Helper files for grading assignments
-           └── submitted/         # Student submissions
-   └── hasura-server/         # https://github.com/ZINC-FYP-2022-23/hasura-server
-       └── hasura/              # Metadata of Hasura server
-       └── ...
-   └── local-server/
-       └── .env                     # Environmental variables for Docker Compose
-       └── cloudflared-config.yml   # Cloudflared configuration file
-       └── config.properties        # Grader daemon configuration file
-       └── ...
-   └── student-ui/            # https://github.com/ZINC-FYP-2022-23/student-ui
-   └── webhook/               # https://github.com/ZINC-FYP-2022-23/webhook
+   ├── console/               # https://github.com/ZINC-FYP-2022-23/console
+   ├── grader/                # https://gitlab.com/zinc-stack/grader
+   ├── grader-daemon/         # Stores grader daemon-related files
+   │   ├── log/                 # Same as `config.properties` -> `context.logPaths.envHostRoot`
+   │   ├── out/                 # Same as `config.properties` -> `context.outPathsRoots.envHostRoot`
+   │   └── shared/              # Same as `config.properties` -> `context.inPaths.envHostRoot`
+   │       ├── extracted/         # Extracted files from submissions
+   │       ├── generated/         # Generated files by the grader daemon
+   │       │   ├── assignment/
+   │       │   └── submission/
+   │       ├── helpers/           # Helper files for grading assignments
+   │       └── submitted/         # Student submissions
+   ├── hasura-server/          # https://github.com/ZINC-FYP-2022-23/hasura-server
+   │   ├── hasura/                # Metadata of Hasura server
+   │   └── ...
+   ├── local-server/
+   │   ├── .env                     # Environmental variables for Docker Compose
+   │   ├── cloudflared-config.yml   # Cloudflared configuration file
+   │   ├── config.properties        # Grader daemon configuration file
+   │   └── ...
+   ├── student-ui/             # https://github.com/ZINC-FYP-2022-23/student-ui
+   └── webhook/                # https://github.com/ZINC-FYP-2022-23/webhook
    ```
 
    > **Warning**
@@ -91,9 +91,8 @@ In `local-server/` folder, you should create a new file called `cloudflared-cred
 ```sh
 ~/dev/fyp-prod/
 └── local-server/
-  └── cloudflared-credentials.json    # <--- Create this file
-  └── ...
-└── ...
+    ├── cloudflared-credentials.json  # <-- Create this file
+    └── ...
 ```
 
 It contains the credentials for the Cloudflared tunnelling service. Please contact Kris for the credentials.
