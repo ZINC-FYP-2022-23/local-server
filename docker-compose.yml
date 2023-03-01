@@ -145,6 +145,32 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: zincdevtest
       WEBHOOK_ADDR: webhook:4000
 
+  student-ui:
+    container_name: student-ui
+    build:
+      context: ../student-ui
+      dockerfile: Dockerfile
+      args:
+        NPM_TOKEN: ${FONT_AWESOME_NPM_TOKEN}
+    depends_on:
+      - webhook
+    restart: always
+    networks:
+      - zinc-production
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../grader-daemon/shared:${GRADER_HOST_ROOT}
+    environment:
+      # View "console" repo -> ".env.local.example" for more details
+      NEXT_PUBLIC_UPLOAD_DIR: ${GRADER_HOST_ROOT}
+      PORT: 3001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      API_URL: apizinc2023.ust.dev
+      HASURA_GRAPHQL_ADMIN_SECRET: zincdevtest
+      WEBHOOK_ADDR: webhook:4000
+
 volumes:
   db_data_prod:
 
