@@ -5,8 +5,14 @@ tunnel: zincfyp2023
 credentials-file: /etc/cloudflared/tunnel-credentials.json
 
 ingress:
-  # IP Address uses your machine's local IP address (not the public IP of your machine)
-  # It can be checked via the `ip a` command
+  # IP Address uses your machine's local IP address (not the public IP of your machine).
+  # It can be checked via the `ip a` command.
+  #
+  # If you're running the Docker Compose network on a cloud virtual machine (e.g. DigitalOcean Droplet),
+  # you must reserve a static IP address that points to your VM, and replace `${LOCAL_IP}` with that reserved IP.
+  # Please do your own research on how to reserve a static IP address in your cloud VM provider. For DigitalOcean
+  # Droplet users, check out: https://docs.digitalocean.com/products/networking/reserved-ips/quickstart/
+
   # API URL for Hasura GraphQL Engine
   - hostname: apizinc2023.ust.dev
     service: http://${LOCAL_IP}:8080
