@@ -100,9 +100,11 @@ It contains the credentials for the Cloudflared tunnelling service. Please conta
 ### Grader Daemon Executable
 
 1. Visit the `grader/` folder created by the setup script
-2. Install Kotlin dependencies
-3. Build the Grader Daemon executable with `./gradlew daemon:shadowJar`
-4. Move the executable to the root of the `grader-daemon/` folder created by the setup script
+2. Checkout the correct feature branch:
+   a. `temp/feature/autogenerate-testcase` - Auto-generate expected output of test cases
+3. Install Kotlin dependencies
+4. Build the Grader Daemon executable with `./gradlew daemon:shadowJar`
+5. Move the executable to the root of the `grader-daemon/` folder created by the setup script
 
    ```sh
    # Assume you're in root of `grader/` folder
