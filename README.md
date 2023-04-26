@@ -15,7 +15,8 @@ If you're seeing an error on first load, please append `login` to the URL (e.g. 
 
 ### Prerequisites
 
-Make sure that you can run Docker as a non-root user. Follow [this guide](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to create a `docker` group and add yourself to the `docker` group.
+1. Make sure that you can run Docker as a non-root user. Follow [this guide](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) to create a `docker` group and add yourself to the `docker` group.
+2. Make sure the timezone of your local machine is `Asia/Hong_Kong`. Follow [this guide](https://linuxize.com/post/how-to-set-or-change-timezone-in-linux/) to change the timezone.
 
 ### Setup Script
 
